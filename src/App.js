@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Link } from 'react-router-dom';
-import Routes from './Routes'; // Update the path if you place it in a different directory
+import Routes from './components/Routes'; // Update the path if you place it in a different directory
 
 function App() {
   return (
