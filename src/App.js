@@ -1,18 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Link } from 'react-router-dom';
+import Routes from './Routes'; // Update the path if you place it in a different directory
 
 function App() {
-  const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    fetch("http://localhost:4000/health-check")
-      .then(response => response.text())
-      .then(data => setMessage(data));
-  }, []);
-
   return (
-    <div className="App">
-      {message}
-    </div>
+    <Router>
+      <div>
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/customers">Customers</Link>
+            </li>
+            <li>
+              <Link to="/movies">Movies</Link>
+            </li>
+          </ul>
+        </nav>
+
+        <Routes />
+      </div>
+    </Router>
   );
 }
 
