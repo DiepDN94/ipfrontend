@@ -15,7 +15,7 @@ describe('<Home />', () => {
     jest.clearAllMocks();
   });
 
-  it('displays top 5 actors after fetching', async () => {
+  it('displays top 5 actors and top 5 films after fetching', async () => {
 
     // mock the actors
     const mockActors = [
