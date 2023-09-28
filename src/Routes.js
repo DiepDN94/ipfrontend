@@ -1,8 +1,8 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Customers from './Customers';
-import Home from './Home';
-import Movies from './Movies';
+import Customers from './components/Customers';
+import Home from './components/Home';
+import Movies from './components/Movies';
 import ReportButton from './components/ReportButton'; 
 
 const RoutesConfig = () => {
