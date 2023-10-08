@@ -19,7 +19,6 @@ function App() {
             </li>
           </ul>
         </nav>
-
         <Routes />
       </div>
     </Router>
