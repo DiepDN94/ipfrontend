@@ -10,7 +10,6 @@ function Movies() {
     actorName: '',
     genre: ''
   });
-  const [cart, setCart] = useState({});
   const [availabilityError, setAvailabilityError] = useState(null);
   const [customerFirstName, setCustomerFirstName] = useState('');
   const [customerLastName, setCustomerLastName] = useState('');
@@ -46,55 +45,37 @@ function Movies() {
     } catch (err) {
       console.error("Error fetching film details or language:", err);
     }
-  };
+  }; 
 
-  const toggleCart = (filmId) => {
-    // Find the movie from the movies list
-    const movie = movies.find(m => m.film_id === filmId);
-  
-    if (!movie) return;  // Exit if the movie is not found
-  
-    setCart(prevCart => {
-      const updatedCart = { ...prevCart };
-  
-      // Ensure cart copies is < available copies
-      if ((updatedCart[filmId] && updatedCart[filmId] < movie.available_copies) || !updatedCart[filmId]) {
-        if (updatedCart[filmId]) {
-          updatedCart[filmId] += 1;
-        } else {
-          updatedCart[filmId] = 1;
-        }
-      }
-  
-      return updatedCart;
-    });
-  };  
-
-  const rentFilms = async () => {
+  // Function to rent a film to the customer
+  const rentFilm = async (filmId) => {
     if (!customerFirstName || !customerLastName) {
       alert('Please fill out the customer information!');
       return;
     }
+    console.log("Film ID:", filmId);
+    console.log("First Name:", customerFirstName);
+    console.log("Last Name:", customerLastName);
 
     try {
-      const response = await api.post('/rent', { 
-        films: Object.keys(cart).map(Number), 
-        firstName: customerFirstName, 
-        lastName: customerLastName 
+      const response = await api.post('/rentFilm', {
+        filmId,
+        firstName: customerFirstName,
+        lastName: customerLastName,
       });
-      
+
       if (response.data.success) {
-        alert('Films rented successfully!');
-        setCart({});
+        alert('Film rented successfully!');
         setCustomerFirstName('');
         setCustomerLastName('');
       } else {
         setAvailabilityError(response.data.message);
       }
     } catch (err) {
-      alert('Error renting films:', err.message);
+      alert('Error renting the film:', err.message);
     }
-};
+  };
+
 
 
 return (
@@ -145,25 +126,6 @@ return (
       </form>
     </div>
 
-    <div style={{ border: '1px solid black', padding: '10px', marginTop: '20px' }}>
-      <h3>Cart</h3>
-      {Object.keys(cart).length === 0 ? (
-        <p>No films in the cart.</p>
-      ) : (
-        <ul>
-          {movies
-            .filter(movie => cart[movie.film_id])
-            .map(movie => (
-              <li key={movie.film_id}>
-                {movie.title} (x{cart[movie.film_id]}) 
-                <button onClick={() => toggleCart(movie.film_id)}>Remove one copy</button>
-              </li>
-            ))}
-        </ul>
-      )}
-      {Object.keys(cart).length > 0 && <button onClick={rentFilms}>Rent Selected Films</button>}
-    </div>
-
     {selectedFilmDetails && (
       <div style={{ marginTop: '20px' }}>
         <h2>Film Details</h2>
@@ -179,16 +141,19 @@ return (
     
     <div>
       <h2>Movies</h2>
-      <ul>
-        {movies.map(movie => (
-          <li key={movie.film_id}>
-            <span onClick={() => fetchFilmDetails(movie.film_id)} style={{ cursor: 'pointer', marginRight: '10px' }}>
-              {movie.title} - Available Copies: {movie.available_copies}
-            </span>
-            <button onClick={() => toggleCart(movie.film_id)}>Add to Cart</button>
-          </li>
-        ))}
-      </ul>
+        <ul>
+          {movies.map((movie) => (
+            <li key={movie.film_id}>
+              <span
+                onClick={() => fetchFilmDetails(movie.film_id)}
+                style={{ cursor: 'pointer', marginRight: '10px' }}
+              >
+                {movie.title} - Available Copies: {movie.available_copies}
+              </span>
+              <button onClick={() => rentFilm(movie.film_id)}>Rent Film</button> {/* Add Rent Film button */}
+            </li>
+          ))}
+        </ul>
     </div>
   </div>
 );
