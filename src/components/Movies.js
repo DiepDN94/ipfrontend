@@ -47,7 +47,6 @@ function Movies() {
     }
   }; 
 
-  // Function to rent a film to the customer
   const rentFilm = async (filmId) => {
     if (!customerFirstName || !customerLastName) {
       alert('Please fill out the customer information!');
@@ -75,8 +74,6 @@ function Movies() {
       alert('Error renting the film:', err.message);
     }
   };
-
-
 
 return (
   <div>
