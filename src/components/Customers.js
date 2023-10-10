@@ -54,6 +54,7 @@ const Customers = () => {
       <table>
         <thead>
           <tr>
+            <th>Customer ID</th>
             <th>First Name</th>
             <th>Last Name</th>
             <th>Email</th>
@@ -64,6 +65,7 @@ const Customers = () => {
         <tbody>
           {customers.map((customer) => (
             <tr key={customer.customer_id}>
+              <td>{customer.customer_id}</td>
               <td>{customer.first_name}</td>
               <td>{customer.last_name}</td>
               <td>{customer.email}</td>
