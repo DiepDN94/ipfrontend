@@ -20,6 +20,7 @@ const Home = () => {
       .catch(err => console.error(err));
   }, []);
 
+  //Top 5 Films details
   const fetchFilmDetails = async (film_id) => {
     try {
       const filmRes = await api.get(`/filmDetails/${film_id}`);
@@ -29,6 +30,7 @@ const Home = () => {
     }
   };
 
+  //Top 5 rented films of actors
   const fetchActorMovies = async (actor_id) => {
     try {
       const response = await api.get(`/actorInfo/${actor_id}`);
@@ -52,11 +54,11 @@ const Home = () => {
       {selectedFilmDetails && (
         <div style={{ marginTop: '20px' }}>
           <h2>Film Details</h2>
-          <p><strong>Title:</strong> {selectedFilmDetails.title}</p>
-          <p><strong>Description:</strong> {selectedFilmDetails.description}</p>
-          <p><strong>Release Year:</strong> {selectedFilmDetails.release_year}</p>
-          <p><strong>Language:</strong> {selectedFilmDetails.language}</p>
-          <p><strong>Rating:</strong> {selectedFilmDetails.rating}</p>
+          <p>Title: {selectedFilmDetails.title}</p>
+          <p>Description: {selectedFilmDetails.description}</p>
+          <p>Release Year: {selectedFilmDetails.release_year}</p>
+          <p>Language: {selectedFilmDetails.language}</p>
+          <p>Rating: {selectedFilmDetails.rating}</p>
         </div>
       )}
 

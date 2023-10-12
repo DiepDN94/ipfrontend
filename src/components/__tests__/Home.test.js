@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor, screen, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import Home from '../Home';
 import api from '../api';
@@ -28,6 +28,14 @@ describe('<Home />', () => {
     { film_id: 4, title: 'Film D', rental_count: 1 },
     { film_id: 5, title: 'Film F', rental_count: 4 }
   ];
+
+  const mockFilmDetails = {
+    title: 'Film A',
+    description: 'A great film about adventures.',
+    release_year: '2020',
+    language: 'English',
+    rating: 'PG'
+  };
   
   it('displays top 5 actors and top 5 films after fetching', async () => {
     api.get.mockImplementation((url) => {
@@ -41,15 +49,45 @@ describe('<Home />', () => {
 
     const { findByText } = render(<Home />);
 
+    // Check for film (#numberof rentals)
     for (const film of mockFilms) {
       const filmTitle = `${film.title} (${film.rental_count} rentals)`;
       expect(await screen.findByText(filmTitle)).toBeInTheDocument();
     }
 
+    // Check for actors and formatting first last (#numberof films)
     for (const actor of mockActors) {
       const actorName = `${actor.first_name} ${actor.last_name} (${actor.film_count} films)`;
       expect(await screen.findByText(actorName)).toBeInTheDocument();
     }
   });
-  
+
+  it('fetches and displays film details when a film is clicked', async () => {
+    api.get.mockImplementation((url) => {
+      if (url === '/top5Actors') {
+        return Promise.resolve({ data: mockActors });
+      } else if (url === '/top5Films') {
+        return Promise.resolve({ data: mockFilms });
+      } else if (url.includes('/filmDetails/')) {
+        return Promise.resolve({ data: mockFilmDetails });
+      }
+      return Promise.reject(new Error('Unknown URL'));
+    });
+
+    render(<Home />);
+
+    // Wait for films to render
+    await waitFor(() => screen.getByText('Film A (11 rentals)'));
+
+    // Click on the first film title
+    fireEvent.click(screen.getByText('Film A (11 rentals)'));
+
+    // Check if film details are displayed
+    await waitFor(() => screen.getByText('Film Details'));
+    expect(screen.getByText(`Title: ${mockFilmDetails.title}`)).toBeInTheDocument();
+    expect(screen.getByText(`Description: ${mockFilmDetails.description}`)).toBeInTheDocument();
+    expect(screen.getByText(`Release Year: ${mockFilmDetails.release_year}`)).toBeInTheDocument();
+    expect(screen.getByText(`Language: ${mockFilmDetails.language}`)).toBeInTheDocument();
+    expect(screen.getByText(`Rating: ${mockFilmDetails.rating}`)).toBeInTheDocument();
+  });
 });

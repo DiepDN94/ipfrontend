@@ -6,7 +6,7 @@ import api from '../api';
 
 jest.mock('../api');
 
-describe('<Movies />', () => {
+describe('<Movies search/>', () => {
     afterEach(() => {
     jest.clearAllMocks();
   });
