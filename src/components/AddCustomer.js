@@ -12,17 +12,17 @@ const AddCustomer = () => {
   });
 
   const handleSubmit = async () => {
-    if (!/^[a-zA-Z0-9]*$/.test(customerDetails.store_id) ||
-      !/^[a-zA-Z0-9]*$/.test(customerDetails.first_name) ||
-      !/^[a-zA-Z0-9]*$/.test(customerDetails.last_name) ||
+    if (!/^[a-zA-Z0-9 ]*$/.test(customerDetails.store_id) ||
+      !/^[a-zA-Z0-9 ]*$/.test(customerDetails.first_name) ||
+      !/^[a-zA-Z0-9 ]*$/.test(customerDetails.last_name) ||
       !/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/.test(customerDetails.email) ||
-      !/^[a-zA-Z0-9]*$/.test(customerDetails.country) ||
-      !/^[a-zA-Z0-9]*$/.test(customerDetails.city) ||
-      !/^[a-zA-Z0-9]*$/.test(customerDetails.address) ||
-      !/^[a-zA-Z0-9]*$/.test(customerDetails.district) ||
-      !/^[a-zA-Z0-9]*$/.test(customerDetails.address2) ||
-      !/^[a-zA-Z0-9]*$/.test(customerDetails.postal_code) ||
-      !/^[a-zA-Z0-9]*$/.test(customerDetails.phone)
+      !/^[a-zA-Z0-9 ]*$/.test(customerDetails.country) ||
+      !/^[a-zA-Z0-9 ]*$/.test(customerDetails.city) ||
+      !/^[a-zA-Z0-9 ]*$/.test(customerDetails.address) ||
+      !/^[a-zA-Z0-9 ]*$/.test(customerDetails.district) ||
+      !/^[a-zA-Z0-9 ]*$/.test(customerDetails.address2) ||
+      !/^[a-zA-Z0-9 ]*$/.test(customerDetails.postal_code) ||
+      !/^[a-zA-Z0-9 ]*$/.test(customerDetails.phone)
     ) {
       alert('Invalid input. Please ensure the fields are alphanumeric (Email is an exception example@example.com).');
       return;
