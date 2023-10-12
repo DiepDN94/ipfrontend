@@ -32,15 +32,6 @@ const Customers = () => {
  
     const handleUpdateDatabase = async () => {
       
-      if (
-        (fieldName !== "email" && !/^[a-zA-Z0-9. ]*$/.test(inputValue)) ||
-        (fieldName === "email" && !/^[a-zA-Z0-9. ]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/.test(inputValue))
-      ) {
-        alert("Invalid input. Please ensure the fields are alphanumeric (Email is an exception).");
-        setInputValue(value);  // Reset to original value
-        return;
-      }
-
       onValueChange(inputValue, customerId, fieldName); 
       try {
         await api.post('/updateCustomerDetails', {
