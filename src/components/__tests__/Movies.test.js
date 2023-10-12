@@ -39,19 +39,15 @@ describe('<Movies />', () => {
       }
     });
     
-
     const { getByText, getByPlaceholderText } = render(<Movies />);
 
-    // Wait for genres to be fetched
     await waitFor(() => {
       expect(getByText('Select Genre')).toBeInTheDocument();
     });
 
-    // Set film name to Test and trigger the search
     fireEvent.change(getByPlaceholderText('Search by film name...'), { target: { value: 'Test' } });
     fireEvent.click(getByText('Search'));
 
-    // Wait for the movies to be displayed
     await waitFor(() => {
       mockMovies.forEach(movie => {
         const movieTitle = `${movie.title} - Available Copies: ${movie.available_copies}`;

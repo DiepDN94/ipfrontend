@@ -6,6 +6,8 @@ import AddCustomer from './AddCustomer';
 const Customers = () => {
   const [customers, setCustomers] = useState([]);
   const [searchText, setSearchText] = useState('');
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [rentedMovies, setRentedMovies] = useState([]);
 
   useEffect(() => {}, []);
 
@@ -92,62 +94,118 @@ const Customers = () => {
     newWindow.document.close();
     ReactDOM.render(<AddCustomer />, newWindow.document.getElementById("root"));
   }
+ 
+  const handleReturnMovie = async (rentalId) => {
+    console.log("Attempting to return movie with rentalId:", rentalId);  // Add this line
+    try {
+      const response = await api.post('/returnMovie', {rentalId});
+      if (response.data.success) {
+        fetchCustomerDetails(selectedCustomer.customer_id);
+        alert('Movie successfully returned.');
+      } else {
+        alert(response.data.message || 'Failed to return movie.');
+      }
+    } catch (err) {
+      console.error("Error returning movie:", err);
+      alert('Error returning movie.');
+    }
+  };
+  
+
+  const fetchCustomerDetails = async (customerId) => {
+    try {
+      const response = await api.get(`/customerDetails/${customerId}`);
+      console.log("Fetched details:", response.data);  // Add this line
+      setSelectedCustomer(response.data.customer);
+      setRentedMovies(response.data.rentedMovies);
+    } catch (err) {
+      console.error("Error fetching customer details and rented movies:", err);
+    }
+  };
+  
   
   return (
     <div>
 
-      <button onClick={openAddCustomerForm}>Add New Customer</button>
+    <button onClick={openAddCustomerForm}>Add New Customer</button>
 
-      <div>
-        <label>
-          Search:
-          <input
-            type="text"
-            value={searchText}
-            placeholder="Enter first, last, or email" 
-            onChange={(e) => setSearchText(e.target.value)}
-          />
-        </label>
-        <button onClick={handleSearch}>Search</button>
-      </div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Address</th>
-            <th>City</th>
-            <th>District</th> 
-            <th>Country</th>
-            <th>Phone</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {customers.map((customer) => (
-            <tr key={customer.customer_id}>
-              <td>{customer.customer_id}</td>
-              <td><EditableCell value={customer.first_name} fieldName="first_name" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
-              <td><EditableCell value={customer.last_name} fieldName="last_name" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
-              <td><EditableCell value={customer.email} fieldName="email" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
-              <td><EditableCell value={customer.address} fieldName="address" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
-              <td><EditableCell value={customer.district} fieldName="district" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
-              <td><EditableCell value={customer.city} fieldName="city" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
-              <td><EditableCell value={customer.country} fieldName="country" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
-              <td><EditableCell value={customer.phone} fieldName="phone" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
-              <td><button onClick={() => handleDelete(customer.customer_id)}>Delete</button></td>
-            </tr>
-          ))}
-        </tbody>
-
-      </table>
-
+    <div>
+      <label>
+        Search:
+        <input
+          type="text"
+          value={searchText}
+          placeholder="Enter first, last, or email" 
+          onChange={(e) => setSearchText(e.target.value)}
+        />
+      </label>
+      <button onClick={handleSearch}>Search</button>
     </div>
 
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Address</th>
+          <th>City</th>
+          <th>District</th> 
+          <th>Country</th>
+          <th>Phone</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {customers.map((customer) => (
+          <tr key={customer.customer_id} onClick={() => fetchCustomerDetails(customer.customer_id)} style={{ cursor: 'pointer' }}>
+            <td>{customer.customer_id}</td>
+            <td><EditableCell value={customer.first_name} fieldName="first_name" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
+            <td><EditableCell value={customer.last_name} fieldName="last_name" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
+            <td><EditableCell value={customer.email} fieldName="email" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
+            <td><EditableCell value={customer.address} fieldName="address" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
+            <td><EditableCell value={customer.district} fieldName="district" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
+            <td><EditableCell value={customer.city} fieldName="city" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
+            <td><EditableCell value={customer.country} fieldName="country" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
+            <td><EditableCell value={customer.phone} fieldName="phone" customerId={customer.customer_id} onValueChange={handleValueChange} /></td>
+            <td><button onClick={() => handleDelete(customer.customer_id)}>Delete</button></td>
+          </tr>
+        ))}
+      </tbody>
+
+    </table>
+    
+    {selectedCustomer && (
+      <div>
+        <h3>Rented Movies by {selectedCustomer.first_name} {selectedCustomer.last_name}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Movie ID</th>
+              <th>Movie Title</th>
+              <th>Return Movie</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rentedMovies.map((movie) => (
+              <tr key={movie.film_id}>
+                <td>{movie.film_id}</td>
+                <td>{movie.title}</td>
+                <td>
+                  <button onClick={() => handleReturnMovie(movie.rental_id)} >
+                    Return Movie
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+
+    </div>
   );
 };
 
